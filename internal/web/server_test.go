@@ -200,6 +200,32 @@ func TestLoginProjectRegistrationAndAudit(t *testing.T) {
 	}
 }
 
+func TestPublicLandingLinksToGuide(t *testing.T) {
+	handler, _, _ := testServer(t)
+	server := httptest.NewServer(handler)
+	defer server.Close()
+
+	response, err := http.Get(server.URL + "/")
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ := io.ReadAll(response.Body)
+	response.Body.Close()
+	if response.StatusCode != http.StatusOK || !strings.Contains(string(body), `href="/guide"`) {
+		t.Fatalf("landing page did not expose guide link: status=%d body=%s", response.StatusCode, body)
+	}
+
+	response, err = http.Get(server.URL + "/guide")
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ = io.ReadAll(response.Body)
+	response.Body.Close()
+	if response.StatusCode != http.StatusOK || !strings.Contains(string(body), "Domains &amp; Nginx routes") {
+		t.Fatalf("guide page did not render expected content: status=%d body=%s", response.StatusCode, body)
+	}
+}
+
 func TestDomainsRequireLoginRenderRoutesAndRejectInvalidHostname(t *testing.T) {
 	handler, db, projectPath := testServer(t)
 	server := httptest.NewServer(handler)

@@ -266,6 +266,7 @@ func New(cfg config.Config, db *database.DB, authService *auth.Service, logger *
 	router.StaticFS("/static", http.FS(staticFiles))
 	router.GET("/healthz", server.health)
 	router.GET("/", server.home)
+	router.GET("/guide", server.guidePage)
 	router.GET("/demo", server.demoLogin)
 	router.GET("/login", server.loginPage)
 	router.POST("/login", server.limitBody(1<<20), server.csrfRequired(), server.login)
@@ -367,6 +368,10 @@ func (s *Server) home(c *gin.Context) {
 		Title:    "VPSDeck",
 		DemoMode: s.demoMode,
 	})
+}
+
+func (s *Server) guidePage(c *gin.Context) {
+	s.render(c, http.StatusOK, "guide.html", PageData{Title: "User Guide - VPSDeck"})
 }
 
 func (s *Server) demoLogin(c *gin.Context) {

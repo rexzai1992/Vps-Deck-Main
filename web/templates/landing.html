@@ -17,7 +17,8 @@
     <nav class="nav-links" aria-label="Primary">
       <a href="#capabilities">Features</a>
       <a href="#workflow">Workflow</a>
-      <a href="https://github.com/rexzai1992/Vps-Deck" target="_blank" rel="noopener">GitHub</a>
+      <a href="/guide">Guide</a>
+      <a href="https://github.com/rexzai1992/Vps-Deck-Main" target="_blank" rel="noopener">GitHub</a>
       {{if .DemoMode}}
       <a href="/login">Sign in</a>
       <a class="nav-action" href="/demo">Open demo</a>
@@ -39,7 +40,7 @@
           {{else}}
           <a class="button button-primary" href="/login">Open panel</a>
           {{end}}
-          <a class="button button-secondary" href="https://github.com/rexzai1992/Vps-Deck" target="_blank" rel="noopener">View source</a>
+          <a class="button button-secondary" href="https://github.com/rexzai1992/Vps-Deck-Main" target="_blank" rel="noopener">View source</a>
         </div>
         {{if .DemoMode}}
         <p class="demo-note">Demo login uses <code>demo</code> / <code>demo</code> with write actions disabled.</p>
@@ -185,7 +186,7 @@
         <h2>Run it on your own Ubuntu VPS</h2>
         <p>The installer creates the system user, builds the binary, configures systemd, and installs the Nginx site for the panel.</p>
       </div>
-      <pre><code>git clone https://github.com/rexzai1992/Vps-Deck.git /tmp/vpsdeck-src
+      <pre><code>git clone https://github.com/rexzai1992/Vps-Deck-Main.git /tmp/vpsdeck-src
 sudo VPSDECK_DOMAIN=panel.example.com bash /tmp/vpsdeck-src/scripts/install.sh</code></pre>
     </section>
   </main>
@@ -193,7 +194,7 @@ sudo VPSDECK_DOMAIN=panel.example.com bash /tmp/vpsdeck-src/scripts/install.sh</
   <footer class="site-footer">
     <span>VPSDeck - MIT licensed</span>
     <div>
-      <a href="https://github.com/rexzai1992/Vps-Deck" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/rexzai1992/Vps-Deck-Main" target="_blank" rel="noopener">GitHub</a>
       <a href="/login">Sign in</a>
       {{if .DemoMode}}<a href="/demo">Demo</a>{{end}}
     </div>

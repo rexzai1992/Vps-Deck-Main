@@ -656,10 +656,11 @@ Inspection must be read-only unless the user authorizes installation or system c
 
 ## 16. Current Working State
 
-Last updated: **2026-06-25**
+Last updated: **2026-07-06**
 
 Completed:
 
+- [x] Added a public `/guide` page from the landing navigation, covering login, projects, deploy/files, domains, VPS Doctor, and updates. The guide copy now matches the real fast-forward deploy flow, public GitHub links point at `rexzai1992/Vps-Deck-Main`, and the installer default/docs snippets use the same repository URL.
 - [x] Added the missing **Reverse Proxy Manager**. New `internal/domains` service validates hostnames/targets, allocates internal project ports from the configured pool, renders managed Nginx configs, tests with `nginx -t`, reloads only after a passing test, rolls candidate files/symlinks back on failure, disables routes by removing only the managed enabled symlink, and deletes only managed route files. Migration v5 adds `proxy_routes` and backfills routes from existing `projects.domain` + `projects.port` when present.
 - [x] Enabled the **Domains** nav and `/domains` page. Authenticated admins can create panel/project routes, see target host/port, enabled state, SSL status, last error, and target-port listening warnings, then Test, Apply, Disable, or Delete routes. State-changing routes are CSRF-protected and audited (`proxy_route_create`, `proxy_route_test`, `proxy_route_apply`, `proxy_route_disable`, `proxy_route_delete`, plus started events for Nginx actions). The route form auto-fills a selected project's existing port when available.
 - [x] Updated reverse-proxy config and installer flow. `reverse_proxy` config now tracks the panel bind target, project port pool, managed Nginx available/enabled dirs, bridge include path, and command names. Fresh production installs prefer `127.0.0.1:7788` or the next free localhost port, write the panel Nginx route into `/etc/nginx/deploynest`, create `/etc/nginx/sites-enabled/vpsdeck-managed.conf`, and roll back generated config if `nginx -t` fails. Existing production configs with `0.0.0.0` are normalized to localhost at runtime.

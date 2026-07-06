@@ -1,0 +1,988 @@
+{{define "guide.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Guide - VPSDeck</title>
+  <meta name="description" content="Step-by-step guide to managing your VPS with VPSDeck: projects, domains, health checks, and more.">
+  <link rel="stylesheet" href="/static/landing.css">
+  <style>
+    /* ── Guide-specific overrides ── */
+    body { background: #f5f7fb; }
+
+    .guide-hero {
+      text-align: center;
+      padding: 72px 24px 56px;
+    }
+    .guide-hero .eyebrow {
+      display: inline-block;
+      background: #172033;
+      color: #c7d2fe;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    .guide-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.03em;
+      color: #172033;
+      margin: 0 0 16px;
+    }
+    .guide-hero p {
+      font-size: 1.0625rem;
+      color: #667085;
+      max-width: 560px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+    }
+    .guide-toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .guide-toc a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #dce3ed;
+      font-size: 13px;
+      font-weight: 600;
+      color: #344054;
+      text-decoration: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .guide-toc a:hover { border-color: #6b5bd6; box-shadow: 0 0 0 3px rgba(107,91,214,.10); }
+    .toc-num { font-size: 11px; color: #6b5bd6; font-weight: 700; }
+
+    /* ── Sections ── */
+    .guide-sections { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+    .guide-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 80px;
+    }
+    .guide-section-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .guide-section-num {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #172033;
+      color: #c7d2fe;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .guide-section-head h2 {
+      font-size: 1.375rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: #172033;
+      margin: 0 0 2px;
+    }
+    .guide-section-head p { margin: 0; font-size: 13.5px; color: #667085; }
+
+    .guide-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 760px) {
+      .guide-layout { grid-template-columns: 1fr; }
+    }
+    .guide-prose { font-size: 14.5px; line-height: 1.75; color: #344054; }
+    .guide-prose p { margin: 0 0 14px; }
+    .guide-prose p:last-child { margin: 0; }
+    .guide-prose code {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 12.5px;
+      background: #eef3f8;
+      border: 1px solid #dce3ed;
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+
+    /* ── Steps ── */
+    .steps { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+    .steps li {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #fff;
+      border: 1px solid #dce3ed;
+      border-radius: 10px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      background: #6b5bd6;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .step-body { flex: 1; }
+    .step-body strong { display: block; font-size: 13px; font-weight: 700; color: #172033; margin-bottom: 3px; }
+    .step-body span { font-size: 12.5px; color: #667085; line-height: 1.6; }
+    .step-body code {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 11.5px;
+      background: #eef3f8;
+      border: 1px solid #dce3ed;
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+
+    /* ── Mockup window ── */
+    .mockup-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,.04), 0 12px 40px rgba(20,32,50,.12);
+      border: 1px solid #dce3ed;
+      background: #f5f7fb;
+    }
+    .mockup-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #e8edf5;
+      border-bottom: 1px solid #dce3ed;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+    .mock-url {
+      flex: 1;
+      margin: 0 18px;
+      background: #fff;
+      border: 1px solid #d0d8e4;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 10.5px;
+      color: #667085;
+      text-align: center;
+    }
+    .mock-body {
+      display: flex;
+      font-size: 10px;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      min-height: 220px;
+      background: #f5f7fb;
+    }
+    .mock-sidebar {
+      width: 140px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid #eef3f8;
+      padding: 12px 0;
+    }
+    .mock-brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 12px 12px;
+      font-weight: 800;
+      font-size: 11px;
+      border-bottom: 1px solid #eef3f8;
+      margin-bottom: 6px;
+    }
+    .mock-brand-mark {
+      width: 18px; height: 18px;
+      background: #172033; color: #fff;
+      border-radius: 4px;
+      display: grid; place-items: center;
+      font-size: 9px; font-weight: 800;
+    }
+    .mock-nav-group {
+      padding: 4px 10px 2px;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #a0aab8;
+    }
+    .mock-nav-item {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 12px;
+      font-size: 10.5px;
+      color: #344054;
+    }
+    .mock-nav-item.active {
+      background: #f5f4ff;
+      color: #6b5bd6;
+      font-weight: 600;
+      border-radius: 0;
+    }
+    .mock-nav-ico { font-style: normal; font-size: 10px; }
+    .mock-main { flex: 1; padding: 14px; overflow: hidden; }
+    .mock-page-title {
+      font-size: 13px; font-weight: 800; color: #172033;
+      margin: 0 0 10px;
+      letter-spacing: -.02em;
+    }
+
+    /* Metric tiles */
+    .mock-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 10px; }
+    .mock-metric {
+      background: #fff;
+      border: 1px solid #eef3f8;
+      border-radius: 7px;
+      padding: 8px;
+    }
+    .mock-metric-label { font-size: 8px; color: #a0aab8; font-weight: 600; text-transform: uppercase; margin-bottom: 3px; }
+    .mock-metric-val { font-size: 13px; font-weight: 800; color: #172033; }
+    .mock-metric-sub { font-size: 7.5px; color: #a0aab8; margin-top: 1px; }
+
+    /* Project list */
+    .mock-panel { background: #fff; border: 1px solid #eef3f8; border-radius: 8px; overflow: hidden; }
+    .mock-panel-hd {
+      padding: 7px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #172033;
+      border-bottom: 1px solid #eef3f8;
+    }
+    .mock-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .mock-row:last-child { border-bottom: none; }
+    .mock-dot-status { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: #149a6c; }
+    .dot-red { background: #c2414b; }
+    .dot-gray { background: #a0aab8; }
+    .mock-row-name { flex: 1; font-size: 10.5px; color: #172033; font-weight: 600; }
+    .mock-row-tag { font-size: 8.5px; color: #667085; background: #f0f4f8; padding: 1px 5px; border-radius: 4px; }
+    .mock-row-status { font-size: 8.5px; color: #667085; }
+    .mock-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 5px;
+    }
+    .mock-badge-ok { background: #d1fae5; color: #065f46; }
+    .mock-badge-warn { background: #fef3c7; color: #92400e; }
+    .mock-badge-err { background: #fee2e2; color: #7f1d1d; }
+
+    /* Form mockup */
+    .mock-form { display: flex; flex-direction: column; gap: 8px; }
+    .mock-field {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #dce3ed;
+      border-radius: 7px;
+      padding: 6px 9px;
+      gap: 8px;
+    }
+    .mock-field-label { font-size: 9px; color: #667085; font-weight: 600; width: 55px; flex-shrink: 0; }
+    .mock-field-val { font-size: 10.5px; color: #172033; font-weight: 600; }
+    .mock-field-val.placeholder { color: #a0aab8; font-weight: 400; }
+    .mock-btn-row { display: flex; gap: 6px; margin-top: 4px; }
+    .mock-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 11px; border-radius: 6px;
+      font-size: 9.5px; font-weight: 700;
+    }
+    .mock-btn-primary { background: #172033; color: #fff; }
+    .mock-btn-default { background: #fff; color: #344054; border: 1px solid #dce3ed; }
+    .mock-btn-purple { background: #6b5bd6; color: #fff; }
+
+    /* Domain table */
+    .mock-table { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+    .mock-table th { padding: 4px 8px; text-align: left; font-size: 8px; font-weight: 700; text-transform: uppercase; color: #a0aab8; letter-spacing: .04em; background: #f8fafc; border-bottom: 1px solid #eef3f8; }
+    .mock-table td { padding: 5px 8px; color: #344054; border-bottom: 1px solid #f0f4f8; vertical-align: middle; }
+    .mock-table tr:last-child td { border-bottom: none; }
+    .mock-pill { display: inline-flex; align-items: center; gap: 3px; font-size: 7.5px; font-weight: 700; padding: 1px 6px; border-radius: 99px; }
+    .mock-pill-green { background: #d1fae5; color: #065f46; }
+    .mock-pill-blue { background: #dbeafe; color: #1e40af; }
+    .mock-pill-purple { background: #ede9fe; color: #5b21b6; }
+    .mock-pill-gray { background: #f1f5f9; color: #64748b; }
+    .mock-pill-panel { background: #fef9c3; color: #854d0e; }
+
+    /* Doctor list */
+    .mock-doctor-hd {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #eef3f8;
+      font-size: 10px;
+    }
+    .mock-doctor-hd .mock-btn { margin-left: auto; }
+    .mock-check-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px;
+      border-bottom: 1px solid #f0f4f8;
+      font-size: 9.5px;
+    }
+    .mock-check-row:last-child { border-bottom: none; }
+    .mock-check-label { flex: 1; color: #344054; }
+    .mock-check-val { color: #667085; }
+
+    /* Tip box */
+    .tip-box {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      background: #f5f4ff;
+      border: 1px solid #c4b5fd;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .tip-icon { font-size: 20px; flex-shrink: 0; }
+    .tip-body { font-size: 13px; color: #4c1d95; line-height: 1.6; }
+    .tip-body strong { font-weight: 700; }
+
+    /* Divider between sections */
+    .guide-divider {
+      border: none;
+      border-top: 1px solid #dce3ed;
+      margin: 0 0 64px;
+    }
+
+    /* Footer */
+    .guide-footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid #dce3ed;
+      font-size: 13px;
+      color: #a0aab8;
+    }
+    .guide-footer a { color: #6b5bd6; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="VPSDeck home">
+      <span class="brand-mark">V</span>
+      <span>VPSDeck</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#getting-started">Getting started</a>
+      <a href="#projects">Projects</a>
+      <a href="#domains">Domains</a>
+      <a href="#doctor">VPS Doctor</a>
+      <a class="nav-action" href="/login">Open panel</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="guide-hero">
+      <span class="eyebrow">User guide</span>
+      <h1>Manage your VPS<br>from the browser</h1>
+      <p>VPSDeck puts deployment, files, domains, and health checks behind a clean web panel, with no terminal required for everyday tasks.</p>
+      <div class="guide-toc">
+        <a href="#getting-started"><span class="toc-num">1</span> Log in</a>
+        <a href="#projects"><span class="toc-num">2</span> Add a project</a>
+        <a href="#deploy"><span class="toc-num">3</span> Deploy &amp; files</a>
+        <a href="#domains"><span class="toc-num">4</span> Domains</a>
+        <a href="#doctor"><span class="toc-num">5</span> VPS Doctor</a>
+        <a href="#updates"><span class="toc-num">6</span> Updates</a>
+      </div>
+    </section>
+
+    <div class="guide-sections">
+
+      <!-- 1 · Log in -->
+      <section class="guide-section" id="getting-started">
+        <div class="guide-section-head">
+          <span class="guide-section-num">1</span>
+          <div>
+            <h2>Log in &amp; your dashboard</h2>
+            <p>Where you land after signing in</p>
+          </div>
+        </div>
+        <div class="guide-layout">
+          <div class="guide-prose">
+            <p>Open your VPSDeck URL in a browser and sign in with your admin password. After login you land on the <strong>Dashboard</strong>, which shows a live snapshot of your server's CPU, memory, and disk usage alongside all registered projects.</p>
+            <ul class="steps">
+              <li>
+                <span class="step-num">1</span>
+                <div class="step-body">
+                  <strong>Open VPSDeck</strong>
+                  <span>Go to your panel URL, e.g. <code>https://vps.example.com</code> or <code>http://&lt;server-ip&gt;:8080</code>.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">2</span>
+                <div class="step-body">
+                  <strong>Enter your password</strong>
+                  <span>Type the admin password you set when you installed VPSDeck and click <strong>Sign in</strong>.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">3</span>
+                <div class="step-body">
+                  <strong>Dashboard overview</strong>
+                  <span>Four metric cards show CPU, memory, disk, and uptime. Below is your project list with a real-time running/stopped indicator.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Mockup: Dashboard -->
+          <div class="mockup-wrap">
+            <div class="mockup-bar">
+              <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+              <span class="mock-url">vps.example.com/dashboard</span>
+            </div>
+            <div class="mock-body">
+              <nav class="mock-sidebar">
+                <div class="mock-brand"><span class="mock-brand-mark">V</span> VPSDeck</div>
+                <div class="mock-nav-group">Monitor</div>
+                <div class="mock-nav-item active"><span class="mock-nav-ico">◉</span> Dashboard</div>
+                <div class="mock-nav-group">Apps</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">◇</span> Projects</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">⇅</span> Deployments</div>
+                <div class="mock-nav-group">Manage</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">□</span> Files</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">◎</span> Domains</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">⇄</span> Ports</div>
+                <div class="mock-nav-group">System</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">✦</span> VPS Doctor</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">↑</span> Updates</div>
+              </nav>
+              <div class="mock-main">
+                <div class="mock-page-title">Dashboard</div>
+                <div class="mock-metrics">
+                  <div class="mock-metric">
+                    <div class="mock-metric-label">CPU</div>
+                    <div class="mock-metric-val">14%</div>
+                    <div class="mock-metric-sub">2 cores</div>
+                  </div>
+                  <div class="mock-metric">
+                    <div class="mock-metric-label">Memory</div>
+                    <div class="mock-metric-val">41%</div>
+                    <div class="mock-metric-sub">1.6 / 4 GB</div>
+                  </div>
+                  <div class="mock-metric">
+                    <div class="mock-metric-label">Disk</div>
+                    <div class="mock-metric-val">53%</div>
+                    <div class="mock-metric-sub">27 / 50 GB</div>
+                  </div>
+                  <div class="mock-metric">
+                    <div class="mock-metric-label">Uptime</div>
+                    <div class="mock-metric-val">12d</div>
+                    <div class="mock-metric-sub">3 h 22 m</div>
+                  </div>
+                </div>
+                <div class="mock-panel">
+                  <div class="mock-panel-hd">Projects</div>
+                  <div class="mock-row"><span class="mock-dot-status dot-green"></span><span class="mock-row-name">api-service</span><span class="mock-row-tag">Node.js</span><span class="mock-row-status">:3000</span></div>
+                  <div class="mock-row"><span class="mock-dot-status dot-green"></span><span class="mock-row-name">faceapp</span><span class="mock-row-tag">Node.js</span><span class="mock-row-status">:4000</span></div>
+                  <div class="mock-row"><span class="mock-dot-status dot-red"></span><span class="mock-row-name">blog</span><span class="mock-row-tag">Custom</span><span class="mock-row-status">stopped</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="guide-divider">
+
+      <!-- 2 · Add a project -->
+      <section class="guide-section" id="projects">
+        <div class="guide-section-head">
+          <span class="guide-section-num">2</span>
+          <div>
+            <h2>Register a project</h2>
+            <p>Tell VPSDeck about an app already on your server</p>
+          </div>
+        </div>
+        <div class="guide-layout">
+          <div class="guide-prose">
+            <p>A <strong>project</strong> is an app folder on your VPS. VPSDeck registers the folder so it can show status, manage files, and set up a domain without moving your app.</p>
+            <ul class="steps">
+              <li>
+                <span class="step-num">1</span>
+                <div class="step-body">
+                  <strong>Go to Projects → Add project</strong>
+                  <span>Click <strong>Projects</strong> in the sidebar, then the <strong>Add project</strong> button in the top right.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">2</span>
+                <div class="step-body">
+                  <strong>Fill in the details</strong>
+                  <span>Enter the folder path (e.g. <code>/var/www/myapp</code>), a display name, the app type, and the port it listens on.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">3</span>
+                <div class="step-body">
+                  <strong>Click Register project</strong>
+                  <span>VPSDeck saves the project. Its status dot turns green if the port is reachable, red if the process isn't running.</span>
+                </div>
+              </li>
+            </ul>
+            <div class="tip-box">
+              <span class="tip-icon">💡</span>
+              <span class="tip-body"><strong>Tip:</strong> You can also add a project from a GitHub repository. VPSDeck clones the repo into the managed apps folder, stores the branch and deploy mode, and lets you deploy with one click from the panel.</span>
+            </div>
+          </div>
+          <!-- Mockup: New project form -->
+          <div class="mockup-wrap">
+            <div class="mockup-bar">
+              <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+              <span class="mock-url">vps.example.com/projects/new</span>
+            </div>
+            <div class="mock-body">
+              <nav class="mock-sidebar">
+                <div class="mock-brand"><span class="mock-brand-mark">V</span> VPSDeck</div>
+                <div class="mock-nav-group">Monitor</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">◉</span> Dashboard</div>
+                <div class="mock-nav-group">Apps</div>
+                <div class="mock-nav-item active"><span class="mock-nav-ico">◇</span> Projects</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">⇅</span> Deployments</div>
+                <div class="mock-nav-group">Manage</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">□</span> Files</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">◎</span> Domains</div>
+              </nav>
+              <div class="mock-main">
+                <div class="mock-page-title">Add project</div>
+                <div class="mock-form">
+                  <div class="mock-field">
+                    <span class="mock-field-label">Folder</span>
+                    <span class="mock-field-val">/var/www/myapp</span>
+                  </div>
+                  <div class="mock-field">
+                    <span class="mock-field-label">Name</span>
+                    <span class="mock-field-val">My App</span>
+                  </div>
+                  <div class="mock-field">
+                    <span class="mock-field-label">Type</span>
+                    <span class="mock-field-val">Node.js ▾</span>
+                  </div>
+                  <div class="mock-field">
+                    <span class="mock-field-label">Port</span>
+                    <span class="mock-field-val">3000</span>
+                  </div>
+                  <div class="mock-field">
+                    <span class="mock-field-label">GitHub repo</span>
+                    <span class="mock-field-val placeholder">Optional</span>
+                  </div>
+                  <div class="mock-btn-row">
+                    <span class="mock-btn mock-btn-primary">Register project</span>
+                    <span class="mock-btn mock-btn-default">Cancel</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="guide-divider">
+
+      <!-- 3 · Deploy & files -->
+      <section class="guide-section" id="deploy">
+        <div class="guide-section-head">
+          <span class="guide-section-num">3</span>
+          <div>
+            <h2>Deploy &amp; manage files</h2>
+            <p>Push new code and edit files without SSH</p>
+          </div>
+        </div>
+        <div class="guide-layout">
+          <div class="guide-prose">
+            <p>If a project is connected to GitHub, hit <strong>Deploy latest</strong> to pull the newest commit and restart the service — all in one click. No terminal needed.</p>
+            <ul class="steps">
+              <li>
+                <span class="step-num">1</span>
+                <div class="step-body">
+                  <strong>Open the project</strong>
+                  <span>Click the project name in the sidebar or the Projects list.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">2</span>
+                <div class="step-body">
+                  <strong>Deploy latest</strong>
+                  <span>Click <strong>Deploy latest</strong>. VPSDeck fetches the branch, applies a fast-forward merge, optionally rebuilds Docker Compose, and logs the output under Deployment history.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">3</span>
+                <div class="step-body">
+                  <strong>Browse &amp; edit files</strong>
+                  <span>Click <strong>Files</strong> to browse the project folder. You can upload files, create folders, edit text files in the browser, and download zips.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">4</span>
+                <div class="step-body">
+                  <strong>Manage env variables</strong>
+                  <span>Click <strong>Environment</strong> to view and edit the project's <code>.env</code> file. Changes are saved directly to disk.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Mockup: Project detail -->
+          <div class="mockup-wrap">
+            <div class="mockup-bar">
+              <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+              <span class="mock-url">vps.example.com/projects/3</span>
+            </div>
+            <div class="mock-body">
+              <nav class="mock-sidebar">
+                <div class="mock-brand"><span class="mock-brand-mark">V</span> VPSDeck</div>
+                <div class="mock-nav-group">Apps</div>
+                <div class="mock-nav-item active"><span class="mock-nav-ico">◇</span> Projects</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">⇅</span> Deployments</div>
+                <div class="mock-nav-group">Manage</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">□</span> Files</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">◎</span> Domains</div>
+              </nav>
+              <div class="mock-main">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                  <div style="width:28px;height:28px;background:#172033;border-radius:7px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800;flex-shrink:0">F</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:800;color:#172033;line-height:1.2">faceapp</div>
+                    <div style="font-size:8.5px;color:#667085">/var/www/faceapp</div>
+                  </div>
+                  <span class="mock-badge mock-badge-ok" style="margin-left:auto">● running</span>
+                </div>
+                <div class="mock-btn-row" style="margin-bottom:10px">
+                  <span class="mock-btn mock-btn-primary">Deploy latest</span>
+                  <span class="mock-btn mock-btn-default">Files</span>
+                  <span class="mock-btn mock-btn-default">Environment</span>
+                </div>
+                <div class="mock-panel">
+                  <div class="mock-panel-hd">Project details</div>
+                  <div class="mock-row"><span class="mock-row-name" style="color:#667085;font-weight:400">Type</span><span class="mock-row-tag">Node.js</span></div>
+                  <div class="mock-row"><span class="mock-row-name" style="color:#667085;font-weight:400">Domain</span><span style="font-size:9.5px;color:#2563eb">https://faceapp.example.com</span></div>
+                  <div class="mock-row"><span class="mock-row-name" style="color:#667085;font-weight:400">Port</span><span class="mock-row-tag">4000</span></div>
+                  <div class="mock-row"><span class="mock-row-name" style="color:#667085;font-weight:400">Last deployed</span><span style="font-size:9px;color:#667085">2 hours ago</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="guide-divider">
+
+      <!-- 4 · Domains -->
+      <section class="guide-section" id="domains">
+        <div class="guide-section-head">
+          <span class="guide-section-num">4</span>
+          <div>
+            <h2>Domains &amp; Nginx routes</h2>
+            <p>Connect a public hostname to your project</p>
+          </div>
+        </div>
+        <div class="guide-layout">
+          <div class="guide-prose">
+            <p>The <strong>Domains</strong> page lets you create Nginx reverse-proxy routes that map a public domain name to a project port. VPSDeck writes and manages the Nginx config for you.</p>
+            <ul class="steps">
+              <li>
+                <span class="step-num">1</span>
+                <div class="step-body">
+                  <strong>Point DNS first</strong>
+                  <span>In your domain registrar, add an <strong>A record</strong> pointing your hostname (e.g. <code>app.example.com</code>) to your VPS public IP. Wait a few minutes for propagation.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">2</span>
+                <div class="step-body">
+                  <strong>Add a managed route</strong>
+                  <span>Go to <strong>Domains</strong> → expand <em>Add managed route</em>, enter the hostname, select your project, and click <strong>Create route</strong>.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">3</span>
+                <div class="step-body">
+                  <strong>Test &amp; Apply</strong>
+                  <span>Click <strong>Test</strong> to check the Nginx config syntax, then <strong>Apply</strong> to reload Nginx and make the route live.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">4</span>
+                <div class="step-body">
+                  <strong>Import an existing config (optional)</strong>
+                  <span>If you already have Nginx configs on the server, the <em>Existing Nginx Routes</em> section shows them all. Click <strong>Import</strong> to track one in VPSDeck — it never modifies the original file.</span>
+                </div>
+              </li>
+            </ul>
+            <div class="tip-box">
+              <span class="tip-icon">🔒</span>
+              <span class="tip-body"><strong>SSL (HTTPS):</strong> Once the HTTP route is live, run <code>sudo certbot --nginx -d app.example.com</code> on the server. Certbot handles the certificate and updates Nginx automatically. VPSDeck will then show the cert expiry date in the Domains table.</span>
+            </div>
+          </div>
+          <!-- Mockup: Domains page -->
+          <div class="mockup-wrap">
+            <div class="mockup-bar">
+              <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+              <span class="mock-url">vps.example.com/domains</span>
+            </div>
+            <div class="mock-body">
+              <nav class="mock-sidebar">
+                <div class="mock-brand"><span class="mock-brand-mark">V</span> VPSDeck</div>
+                <div class="mock-nav-group">Apps</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">◇</span> Projects</div>
+                <div class="mock-nav-group">Manage</div>
+                <div class="mock-nav-item active"><span class="mock-nav-ico">◎</span> Domains</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">⇄</span> Ports</div>
+              </nav>
+              <div class="mock-main">
+                <div class="mock-page-title">Domains</div>
+                <!-- Managed routes table -->
+                <div class="mock-panel" style="margin-bottom:8px">
+                  <div class="mock-panel-hd">VPSDeck Domains</div>
+                  <table class="mock-table">
+                    <tr><th>Hostname</th><th>Project</th><th>SSL</th><th>Status</th><th></th></tr>
+                    <tr>
+                      <td style="color:#2563eb;font-weight:600">api.example.com</td>
+                      <td><span class="mock-pill mock-pill-gray">api-service</span></td>
+                      <td><span class="mock-pill mock-pill-green">✓ 87d</span></td>
+                      <td><span class="mock-pill mock-pill-green">active</span></td>
+                      <td><span class="mock-btn mock-btn-default" style="padding:1px 7px;font-size:8px">Test</span></td>
+                    </tr>
+                    <tr>
+                      <td style="color:#2563eb;font-weight:600">blog.example.com</td>
+                      <td><span class="mock-pill mock-pill-gray">blog</span></td>
+                      <td><span class="mock-pill mock-pill-gray">—</span></td>
+                      <td><span class="mock-pill mock-pill-blue">inactive</span></td>
+                      <td><span class="mock-btn mock-btn-purple" style="padding:1px 7px;font-size:8px">Apply</span></td>
+                    </tr>
+                  </table>
+                </div>
+                <!-- Scanner section -->
+                <div class="mock-panel">
+                  <div class="mock-panel-hd">Existing Nginx Routes (scanner)</div>
+                  <table class="mock-table">
+                    <tr><th>Hostname</th><th>Target</th><th>Type</th><th></th></tr>
+                    <tr>
+                      <td style="color:#344054;font-weight:600">faceapp.example.com</td>
+                      <td>:4000</td>
+                      <td><span class="mock-pill mock-pill-blue">project</span></td>
+                      <td><span class="mock-btn mock-btn-purple" style="padding:1px 7px;font-size:8px">Import</span></td>
+                    </tr>
+                    <tr>
+                      <td style="color:#344054;font-weight:600">vps.example.com</td>
+                      <td>:8080</td>
+                      <td><span class="mock-pill mock-pill-panel">panel</span></td>
+                      <td><span style="font-size:8px;color:#a0aab8">panel route</span></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="guide-divider">
+
+      <!-- 5 · VPS Doctor -->
+      <section class="guide-section" id="doctor">
+        <div class="guide-section-head">
+          <span class="guide-section-num">5</span>
+          <div>
+            <h2>VPS Doctor</h2>
+            <p>Diagnose and fix common server problems</p>
+          </div>
+        </div>
+        <div class="guide-layout">
+          <div class="guide-prose">
+            <p><strong>VPS Doctor</strong> runs a set of automated health checks across your server: CPU, memory, disk, Nginx, Docker, and your running projects. It highlights problems and suggests repair actions.</p>
+            <ul class="steps">
+              <li>
+                <span class="step-num">1</span>
+                <div class="step-body">
+                  <strong>Go to VPS Doctor</strong>
+                  <span>Click <strong>VPS Doctor</strong> in the sidebar under System.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">2</span>
+                <div class="step-body">
+                  <strong>Run Full Check</strong>
+                  <span>Click <strong>Run Full Check</strong>. Results appear within seconds showing OK ✓, Warning ⚠, or Failed ✗ for each item.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">3</span>
+                <div class="step-body">
+                  <strong>Act on warnings</strong>
+                  <span>High disk usage? Clear logs. Nginx down? Click <strong>Restart Nginx</strong>. A stopped project? Click <strong>Start</strong> next to it.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <!-- Mockup: Doctor -->
+          <div class="mockup-wrap">
+            <div class="mockup-bar">
+              <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+              <span class="mock-url">vps.example.com/doctor</span>
+            </div>
+            <div class="mock-body">
+              <nav class="mock-sidebar">
+                <div class="mock-brand"><span class="mock-brand-mark">V</span> VPSDeck</div>
+                <div class="mock-nav-group">System</div>
+                <div class="mock-nav-item active"><span class="mock-nav-ico">✦</span> VPS Doctor</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">↑</span> Updates</div>
+              </nav>
+              <div class="mock-main">
+                <div class="mock-page-title">VPS Doctor</div>
+                <div class="mock-panel">
+                  <div class="mock-doctor-hd">
+                    <span class="mock-badge mock-badge-ok">6 OK</span>
+                    <span class="mock-badge mock-badge-warn">1 Warning</span>
+                    <span class="mock-btn mock-btn-primary" style="padding:3px 10px;font-size:8.5px;margin-left:auto">Run Full Check</span>
+                  </div>
+                  <div class="mock-check-row">
+                    <span class="mock-badge mock-badge-ok">✓</span>
+                    <span class="mock-check-label">CPU usage</span>
+                    <span class="mock-check-val">14%</span>
+                  </div>
+                  <div class="mock-check-row">
+                    <span class="mock-badge mock-badge-ok">✓</span>
+                    <span class="mock-check-label">Memory usage</span>
+                    <span class="mock-check-val">41%</span>
+                  </div>
+                  <div class="mock-check-row">
+                    <span class="mock-badge mock-badge-warn">⚠</span>
+                    <span class="mock-check-label">Disk usage</span>
+                    <span class="mock-check-val">81% — high</span>
+                  </div>
+                  <div class="mock-check-row">
+                    <span class="mock-badge mock-badge-ok">✓</span>
+                    <span class="mock-check-label">Nginx service</span>
+                    <span class="mock-check-val">active</span>
+                  </div>
+                  <div class="mock-check-row">
+                    <span class="mock-badge mock-badge-ok">✓</span>
+                    <span class="mock-check-label">Docker service</span>
+                    <span class="mock-check-val">active</span>
+                  </div>
+                  <div class="mock-check-row">
+                    <span class="mock-badge mock-badge-ok">✓</span>
+                    <span class="mock-check-label">Projects online</span>
+                    <span class="mock-check-val">2 / 3</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="guide-divider">
+
+      <!-- 6 · Updates -->
+      <section class="guide-section" id="updates">
+        <div class="guide-section-head">
+          <span class="guide-section-num">6</span>
+          <div>
+            <h2>Keeping VPSDeck up to date</h2>
+            <p>Apply panel updates in one click</p>
+          </div>
+        </div>
+        <div class="guide-layout">
+          <div class="guide-prose">
+            <p>VPSDeck can update itself. The <strong>Updates</strong> page shows the current version and whether a newer release is available. Applying an update rebuilds the binary, swaps it in, and restarts the panel. Your projects keep running throughout.</p>
+            <ul class="steps">
+              <li>
+                <span class="step-num">1</span>
+                <div class="step-body">
+                  <strong>Open Updates</strong>
+                  <span>Click <strong>Updates</strong> in the sidebar under System.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">2</span>
+                <div class="step-body">
+                  <strong>Check for a new version</strong>
+                  <span>The page shows your current version and the latest available. If they differ, an <strong>Apply Update</strong> button appears.</span>
+                </div>
+              </li>
+              <li>
+                <span class="step-num">3</span>
+                <div class="step-body">
+                  <strong>Apply the update</strong>
+                  <span>Click <strong>Apply Update</strong>. VPSDeck downloads the new binary, replaces itself, and restarts. The panel is back within a few seconds.</span>
+                </div>
+              </li>
+            </ul>
+            <div class="tip-box">
+              <span class="tip-icon">📋</span>
+              <span class="tip-body"><strong>Audit log:</strong> Every important action you take in VPSDeck is recorded in the <strong>Audit log</strong>, including deploys, route changes, and file edits. If something goes wrong, check here first to see exactly what changed and when.</span>
+            </div>
+          </div>
+          <!-- Mockup: Updates -->
+          <div class="mockup-wrap">
+            <div class="mockup-bar">
+              <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+              <span class="mock-url">vps.example.com/updates</span>
+            </div>
+            <div class="mock-body">
+              <nav class="mock-sidebar">
+                <div class="mock-brand"><span class="mock-brand-mark">V</span> VPSDeck</div>
+                <div class="mock-nav-group">System</div>
+                <div class="mock-nav-item"><span class="mock-nav-ico">✦</span> VPS Doctor</div>
+                <div class="mock-nav-item active"><span class="mock-nav-ico">↑</span> Updates</div>
+              </nav>
+              <div class="mock-main">
+                <div class="mock-page-title">Updates</div>
+                <div class="mock-panel">
+                  <div class="mock-panel-hd">VPSDeck version</div>
+                  <div class="mock-row">
+                    <span class="mock-row-name" style="color:#667085;font-weight:400">Current</span>
+                    <span class="mock-row-tag" style="font-family:monospace">v0.12.1</span>
+                  </div>
+                  <div class="mock-row">
+                    <span class="mock-row-name" style="color:#667085;font-weight:400">Latest</span>
+                    <span class="mock-row-tag" style="font-family:monospace;color:#149a6c">v0.13.0</span>
+                  </div>
+                  <div class="mock-row">
+                    <span class="mock-row-name" style="color:#667085;font-weight:400">Release</span>
+                    <span style="font-size:9px;color:#667085">2 days ago — new domain scanner</span>
+                  </div>
+                  <div style="padding:10px">
+                    <span class="mock-btn mock-btn-primary" style="padding:6px 16px;font-size:10px">Apply Update</span>
+                  </div>
+                </div>
+                <div class="mock-panel" style="margin-top:8px">
+                  <div class="mock-panel-hd">Recent updates</div>
+                  <div class="mock-row"><span class="mock-row-name" style="font-size:9px">v0.12.1 - Fix: VPS public IP in project fallback URL</span><span style="font-size:8.5px;color:#a0aab8">4d ago</span></div>
+                  <div class="mock-row"><span class="mock-row-name" style="font-size:9px">v0.12.0 - Domains scanner + import feature</span><span style="font-size:8.5px;color:#a0aab8">11d ago</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /guide-sections -->
+  </main>
+
+  <footer class="guide-footer">
+    <p>VPSDeck - <a href="/">Home</a> - <a href="https://github.com/rexzai1992/Vps-Deck-Main" target="_blank" rel="noopener">GitHub</a> - <a href="/login">Open panel</a></p>
+  </footer>
+</body>
+</html>
+{{end}}

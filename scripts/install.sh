@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-REPOSITORY="${VPSDECK_REPOSITORY:-https://github.com/rexzai1992/Vps-Deck.git}"
+REPOSITORY="${VPSDECK_REPOSITORY:-https://github.com/rexzai1992/Vps-Deck-Main.git}"
 BRANCH="${VPSDECK_BRANCH:-main}"
 DOMAIN="${VPSDECK_DOMAIN:-vps.izzul.xyz}"
 SOURCE_DIR="/opt/vpsdeck/src"

@@ -16,7 +16,7 @@ Docker is optional, but Docker Compose project discovery is enabled automaticall
 Connect to the server and run:
 
 ```bash
-git clone https://github.com/rexzai1992/Vps-Deck.git /tmp/vpsdeck-installer
+git clone https://github.com/rexzai1992/Vps-Deck-Main.git /tmp/vpsdeck-installer
 sudo bash /tmp/vpsdeck-installer/scripts/install.sh
 ```
 
